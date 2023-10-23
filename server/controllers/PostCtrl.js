@@ -56,16 +56,43 @@ export const deltePost = async (req, res) => {
 export const getPostById = async (req, res) => {
   try {
     const { id } = req.params;
-    const post = await PostModel.findById({ _id: id });
-    const updateViews = {
-      viewsCount: ++post.viewsCount,
-    };
-    const db = await PostModel.findByIdAndUpdate({ _id: id }, updateViews);
-    return res.status(200).json({ data: db });
+    try {
+      const post = await PostModel.findById({ _id: id });
+      const updateViews = {
+        viewsCount: ++post.viewsCount,
+      };
+      const db = await PostModel.findByIdAndUpdate({ _id: id }, updateViews);
+
+      return res.status(200).json({ db });
+    } catch (error) {
+      console.log(error);
+      return res.status(404).json({ message: "Статтю не знайдено" });
+    }
   } catch (error) {
     console.log(error);
     return res.status(204).json({
-      message: "Невдалося знайти користувача з таким Id",
+      message: "Невдалося знайти статтю з таким Id",
     });
+  }
+};
+
+export const updatePost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
+    const newPost = await PostModel.updateOne(
+      { _id: id },
+      {
+        title: req.body.title,
+        text: req.body.text,
+        imageUrl: req.body.imageUrl,
+        tags: req.body.tags,
+        user: req.userId,
+        author: req.body.author,
+      }
+    );
+    return res.json({ success: true });
+  } catch (error) {
+    console.log(`Hello ${error}`);
   }
 };
