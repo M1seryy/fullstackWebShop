@@ -21,6 +21,22 @@ export const porsCreate = async (req, res) => {
   }
 };
 
+export const getAllTags = async (req, res) => {
+  try {
+    const db = await PostModel.find().limit(5).exec();
+    const tags = db.map((item) => item.tags).flat().slice(0, 5);
+    console.log(db);
+    return res.status(200).json({
+      tags,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({
+      message: "Not found",
+    });
+  }
+};
+
 export const getAllPost = async (req, res) => {
   try {
     const db = await PostModel.find().populate("user").exec();

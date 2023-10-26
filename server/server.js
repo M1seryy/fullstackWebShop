@@ -1,6 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
+import cors from "cors";
 import {
   createPostValidation,
   loginValidation,
@@ -12,6 +13,7 @@ import { authMe, register, signIn } from "./controllers/userCtrl.js";
 import {
   deltePost,
   getAllPost,
+  getAllTags,
   getPostById,
   porsCreate,
   updatePost,
@@ -19,6 +21,7 @@ import {
 import handleVlidationError from "./validations/handleVlidationError.js";
 
 const app = express();
+app.use(cors());
 dotenv.config();
 app.use(express.json());
 
@@ -55,9 +58,10 @@ app.post(
   handleVlidationError,
   porsCreate
 );
+app.get("/tags", getAllTags);
 app.get("/post", getAllPost);
 app.delete("/post/:id", checkAuth, deltePost);
-app.get("/post/:id", checkAuth, getPostById);
+app.get("/post/:id", getPostById);
 app.patch("/post/:id", checkAuth, handleVlidationError, updatePost);
 
 app.listen(process.env.PORT, (err) => {

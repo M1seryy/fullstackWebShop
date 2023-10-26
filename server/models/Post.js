@@ -24,7 +24,7 @@ const PostScheme = new Schema(
     },
     author: {
       type: String,
-      unique: true,
+      unique: false,
     },
     user: {
       type: mongoose.Schema.Types.ObjectId,
