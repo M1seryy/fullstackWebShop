@@ -8,11 +8,11 @@ import { TagsBlock } from "../components/TagsBlock";
 import { CommentsBlock } from "../components/CommentsBlock";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllPosts, getAllTags } from "../redux/slices/postSlice";
-import { getUserData } from "../redux/slices/authSlice";
+import {} from "../redux/slices/authSlice";
 
 export const Home = () => {
   const { posts, tags } = useSelector((state) => state.posts);
-
+  const userData = useSelector((state) => state.auth.data);
   const dispatch = useDispatch();
   const isPostLoaded = posts.status === "loading";
   const isTagsLoaded = tags.status === "loading";
@@ -46,7 +46,7 @@ export const Home = () => {
                 viewsCount={obj.viewsCount}
                 commentsCount={3}
                 tags={tags.items}
-                isEditable
+                isEditable={userData?._id === obj._id}
               />
             )
           )}

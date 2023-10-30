@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import { useForm } from "react-hook-form";
 import styles from "./Login.module.scss";
+import { useDispatch, useSelector } from "react-redux";
+import { getUserData, isAuthSelector } from "../../redux/slices/authSlice";
+import { Navigate, useNavigate } from "react-router-dom";
 
 export const Login = () => {
+  const isAuth = useSelector(isAuthSelector);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
@@ -16,11 +23,22 @@ export const Login = () => {
     defaultValues: {
       email: "",
       password: "",
+      
     },
   });
-  const onSubmit = (values) => {
-    console.log(values);
+  const onSubmit = async (values) => {
+    const data = await dispatch(getUserData(values));
+    if (!data.payload) {
+      alert("Неправильні дані користувача");
+    }
+    if ("token" in data.payload) {
+      localStorage.setItem("token", data.payload.token);
+      dispatch(getUserData(values))
+    }
   };
+  if (isAuth) {
+    return <Navigate to={"/"} />;
+  }
 
   return (
     <Paper classes={{ root: styles.root }}>

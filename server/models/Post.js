@@ -22,10 +22,7 @@ const PostScheme = new Schema(
     imageUrl: {
       type: String,
     },
-    author: {
-      type: String,
-      unique: false,
-    },
+
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",

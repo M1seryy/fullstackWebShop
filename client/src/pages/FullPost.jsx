@@ -5,6 +5,7 @@ import { Index } from "../components/AddComment";
 import { CommentsBlock } from "../components/CommentsBlock";
 import { useParams } from "react-router-dom";
 import axios from "../axios";
+import Markdown from "react-markdown";
 
 export const FullPost = () => {
   const { id } = useParams();
@@ -41,7 +42,7 @@ export const FullPost = () => {
         tags={data.tags}
         isFullPost
       >
-        <p>{data.text}</p>
+        <Markdown children={data.text} />
       </Post>
       <CommentsBlock
         items={[
