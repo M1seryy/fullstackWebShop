@@ -18,6 +18,7 @@ export const Home = () => {
   const isTagsLoaded = tags.status === "loading";
   useEffect(() => {
     dispatch(getAllPosts());
+    dispatch(getAllTags());
   }, []);
   return (
     <>
