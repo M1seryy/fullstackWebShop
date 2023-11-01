@@ -17,7 +17,6 @@ export const Home = () => {
   const isPostLoaded = posts.status === "loading";
   const isTagsLoaded = tags.status === "loading";
   useEffect(() => {
-    dispatch(getAllTags());
     dispatch(getAllPosts());
   }, []);
   return (
@@ -45,8 +44,8 @@ export const Home = () => {
                 createdAt={obj.createdAt}
                 viewsCount={obj.viewsCount}
                 commentsCount={3}
-                tags={tags.items}
-                isEditable={userData?._id === obj._id}
+                tags={obj.tags}
+                isEditable={userData?.userData._id === obj.user._id}
               />
             )
           )}

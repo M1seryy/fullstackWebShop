@@ -16,7 +16,6 @@ export const FullPost = () => {
     axios
       .get(`/post/${id}`)
       .then((res) => {
-        console.log(res);
         setData(res.data.db);
         setLoading(false);
       })
@@ -34,7 +33,7 @@ export const FullPost = () => {
       <Post
         id={data._id}
         title={data.title}
-        imageUrl={data.imageUrl}
+        imageUrl={data.imageUrl ? data.imageUrl : ""}
         user={data.user}
         createdAt={data.createdAt}
         viewsCount={data.viewsCount}
@@ -48,14 +47,14 @@ export const FullPost = () => {
         items={[
           {
             user: {
-              fullName: "Вася Пупкин",
+              fullName: "Вася Пупкін",
               avatarUrl: "https://mui.com/static/images/avatar/1.jpg",
             },
             text: "Это тестовый комментарий 555555",
           },
           {
             user: {
-              fullName: "Иван Иванов",
+              fullName: "Ваня Мішко",
               avatarUrl: "https://mui.com/static/images/avatar/2.jpg",
             },
             text: "When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top",

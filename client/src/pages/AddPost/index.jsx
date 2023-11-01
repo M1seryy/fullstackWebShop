@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
@@ -7,11 +7,14 @@ import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import styles from "./AddPost.module.scss";
 import { isAuthSelector } from "../../redux/slices/authSlice";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import axios from "../../axios";
 
 export const AddPost = () => {
+  const { id } = useParams();
+  const isEditing = Boolean(id);
+
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const isAuth = useSelector(isAuthSelector);
@@ -20,6 +23,19 @@ export const AddPost = () => {
   const [title, setTitle] = useState("");
   const [tags, setTags] = useState("");
   const inputRef = useRef();
+
+  useEffect(() => {
+    if (id) {
+      axios(`/post/${id}`)
+        .then(({ data }) => {
+          setTitle(data.db.title);
+          setText(data.db.text);
+          setImageUrl(data.db.imageUrl);
+          setTags(data.db.tags.join(","));
+        })
+        .catch((err) => console.log(err));
+    }
+  }, []);
 
   const handleChangeFile = async (e) => {
     try {
@@ -46,11 +62,11 @@ export const AddPost = () => {
         tags: tags?.split(","),
         imageUrl,
       };
-      console.log(body);
-      const { data } = await axios.post("/post", body);
-      console.log(data);
-      const id = data._id;
-      navigate(`/post/${id}`);
+      const { data } = isEditing
+        ? await axios.patch(`/post/${id}`, body)
+        : await axios.post("/post", body);
+      const _id = isEditing ? id : data._id;
+      navigate(`/post/${_id}`);
     } catch (error) {
       console.log(error);
       alert("Помилка при створенні статті");
@@ -78,7 +94,6 @@ export const AddPost = () => {
   if (!localStorage.getItem("token") && !isAuth) {
     return <Navigate to={"/"} />;
   }
-
   return (
     <Paper style={{ padding: 30 }}>
       <Button
@@ -91,7 +106,7 @@ export const AddPost = () => {
       <input type="file" ref={inputRef} onChange={handleChangeFile} hidden />
       {imageUrl && (
         <Button variant="contained" color="error" onClick={onClickRemoveImage}>
-          Удалить
+          Видалити
         </Button>
       )}
       {imageUrl && (
@@ -127,8 +142,9 @@ export const AddPost = () => {
       />
       <div className={styles.buttons}>
         <Button onClick={onSubmit} size="large" variant="contained">
-          Створити
+          {isEditing ? "Редагувати" : "Створити"}
         </Button>
+
         <a href="/">
           <Button size="large">Відміна</Button>
         </a>

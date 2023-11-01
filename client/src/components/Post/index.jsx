@@ -1,15 +1,17 @@
-import React from 'react';
-import clsx from 'clsx';
-import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Clear';
-import EditIcon from '@mui/icons-material/Edit';
-import EyeIcon from '@mui/icons-material/RemoveRedEyeOutlined';
-import CommentIcon from '@mui/icons-material/ChatBubbleOutlineOutlined';
+import React from "react";
+import clsx from "clsx";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Clear";
+import EditIcon from "@mui/icons-material/Edit";
+import EyeIcon from "@mui/icons-material/RemoveRedEyeOutlined";
+import CommentIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 
-import styles from './Post.module.scss';
-import { UserInfo } from '../UserInfo';
-import { PostSkeleton } from './Skeleton';
-import { Link } from 'react-router-dom';
+import styles from "./Post.module.scss";
+import { UserInfo } from "../UserInfo";
+import { PostSkeleton } from "./Skeleton";
+import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { deletePost } from "../../redux/slices/postSlice";
 
 export const Post = ({
   id,
@@ -25,12 +27,13 @@ export const Post = ({
   isLoading,
   isEditable,
 }) => {
+  const dispatch = useDispatch();
   if (isLoading) {
     return <PostSkeleton />;
   }
-
-  const onClickRemove = () => {};
-
+  const onClickRemove = (id) => {
+    dispatch(deletePost(id));
+  };
   return (
     <div className={clsx(styles.root, { [styles.rootFull]: isFullPost })}>
       {isEditable && (
@@ -40,7 +43,7 @@ export const Post = ({
               <EditIcon />
             </IconButton>
           </Link>
-          <IconButton onClick={onClickRemove} color="secondary">
+          <IconButton onClick={()=>onClickRemove(id)} color="secondary">
             <DeleteIcon />
           </IconButton>
         </div>
@@ -55,12 +58,14 @@ export const Post = ({
       <div className={styles.wrapper}>
         <UserInfo {...user} additionalText={createdAt} />
         <div className={styles.indention}>
-          <h2 className={clsx(styles.title, { [styles.titleFull]: isFullPost })}>
+          <h2
+            className={clsx(styles.title, { [styles.titleFull]: isFullPost })}
+          >
             {isFullPost ? title : <Link to={`/post/${id}`}>{title}</Link>}
           </h2>
           <ul className={styles.tags}>
             {tags.map((name) => (
-              <li key={name}> 
+              <li key={Math.random()}>
                 <Link to={`/tag/${name}`}>#{name}</Link>
               </li>
             ))}
